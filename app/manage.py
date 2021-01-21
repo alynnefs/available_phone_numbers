@@ -1,9 +1,8 @@
-import os
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
-from settings import app
-from models import db
+from settings import app, db
+from app_models import DIDNumber
 
 
 migrate = Migrate(app, db)

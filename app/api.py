@@ -1,7 +1,7 @@
 from flask import jsonify, request, Response
 
 from settings import app
-from models import DIDNumber
+from app_models import DIDNumber
 
 
 @app.route('/')
