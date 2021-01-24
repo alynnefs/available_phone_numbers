@@ -48,7 +48,11 @@ class DIDNumber(db.Model):
             return jsonify({'exception': e})
 
 
-        response = paginate(DIDNumber.query.order_by(DIDNumber.id), page=page, per_page=per_page)
+        response = paginate(
+            DIDNumber.query.order_by(DIDNumber.id),
+            page=page,
+            per_page=per_page
+        )
         items = response['items']
 
         return items

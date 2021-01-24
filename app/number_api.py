@@ -1,5 +1,4 @@
 from flask import jsonify, request, Response
-import jwt
 
 from settings import app
 from number_models import DIDNumber
@@ -34,7 +33,11 @@ def add_did():
         request_data["currency"]
     )
 
-    response = Response("DID number added", 201, mimetype='application/json')
+    response = Response(
+        "DID number added",
+        201,
+        mimetype='application/json'
+    )
     return response
 
 
@@ -49,14 +52,22 @@ def update_did(id):
         request_data["setupPrice"],
         request_data["currency"]
     )
-    response = Response("DID number updated", status=200, mimetype='application/json')
+    response = Response(
+        "DID number updated",
+        status=200,
+        mimetype='application/json'
+    )
     return response
 
 @app.route('/dids/<int:id>', methods=['DELETE'])
 @token_required
 def remove_did(id):
     DIDNumber.delete_did(id)
-    response = Response("DID number deleted", status=200, mimetype='application/json')
+    response = Response(
+        "DID number deleted",
+        status=200,
+        mimetype='application/json'
+    )
     return response
 
 

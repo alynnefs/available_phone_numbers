@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, make_response, Response
+from flask import request, jsonify, make_response, Response
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 import jwt
@@ -35,7 +35,10 @@ def token_required(f):
 def signup_user():
     data = request.get_json()
 
-    hashed_password = generate_password_hash(data['password'], method='sha256')
+    hashed_password = generate_password_hash(
+        data['password'],
+        method='sha256'
+    )
 
     new_user = User(
         public_id=str(uuid.uuid4()),
@@ -44,9 +47,12 @@ def signup_user():
     )
     db.session.add(new_user)
     db.session.commit()
-    # return jsonify({'message': 'registered successfully'})
-    # import pdb; pdb.set_trace()
-    response = Response("registered successfully", 201, mimetype='application/json')
+
+    response = Response(
+        "registered successfully",
+        201,
+        mimetype='application/json'
+    )
     return response
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -54,16 +60,30 @@ def login_user():
     auth = request.authorization
 
     if not auth or not auth.username or not auth.password:
-        return make_response('could not verify', 401, {'WWW.Authentication': 'Basic realm: "login required"'})
+        return make_response(
+            'could not verify',
+            401,
+            {'WWW.Authentication': 'Basic realm: "login required"'}
+    )
 
     user = User.query.filter_by(name=auth.username).first()
 
     if check_password_hash(user.password, auth.password):
-        token = jwt.encode({'public_id': user.public_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
+        token = jwt.encode(
+            {
+            'public_id': user.public_id,
+            'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=120)
+            },
+            app.config['SECRET_KEY']
+        )
         responseObject = jsonify({'token' : token.decode('UTF-8')})
         return make_response(responseObject), 200
 
-    return make_response('could not verify',  401, {'WWW.Authentication': 'Basic realm: "login required"'})
+    return make_response(
+        'could not verify',
+        401,
+        {'WWW.Authentication': 'Basic realm: "login required"'}
+    )
 
 @app.route('/users', methods=['GET'])
 def get_all_users():
@@ -86,7 +106,11 @@ def get_all_users():
 def remove_user(public_id):
     User.query.filter_by(public_id=str(public_id)).delete()
     db.session.commit()
-    response = Response("User deleted", status=200, mimetype='application/json')
+    response = Response(
+        "User deleted",
+        status=200,
+        mimetype='application/json'
+    )
     return response
 
 
