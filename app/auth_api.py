@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, make_response
+from flask import Flask, request, jsonify, make_response, Response
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 import jwt
@@ -60,7 +60,7 @@ def login_user():
 @app.route('/users', methods=['GET'])
 def get_all_users():
 
-    users = Users.query.all()
+    users = User.query.all()
 
     result = []
 
@@ -73,6 +73,14 @@ def get_all_users():
         result.append(user_data)
 
     return jsonify({'users': result})
+
+@app.route('/remove_user/<public_id>', methods=['DELETE'])
+@token_required
+def remove_user(public_id):
+    User.query.filter_by(public_id=str(public_id)).delete()
+    db.session.commit()
+    response = Response("User deleted", status=200, mimetype='application/json')
+    return response
 
 
 if  __name__ == '__main__':
