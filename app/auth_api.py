@@ -37,10 +37,17 @@ def signup_user():
 
     hashed_password = generate_password_hash(data['password'], method='sha256')
 
-    new_user = User(public_id=str(uuid.uuid4()), name=data['name'], password=hashed_password)
+    new_user = User(
+        public_id=str(uuid.uuid4()),
+        name=data['name'],
+        password=hashed_password
+    )
     db.session.add(new_user)
     db.session.commit()
-    return jsonify({'message': 'registered successfully'})
+    # return jsonify({'message': 'registered successfully'})
+    # import pdb; pdb.set_trace()
+    response = Response("registered successfully", 201, mimetype='application/json')
+    return response
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_user():
@@ -53,7 +60,8 @@ def login_user():
 
     if check_password_hash(user.password, auth.password):
         token = jwt.encode({'public_id': user.public_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
-        return jsonify({'token' : token.decode('UTF-8')})
+        responseObject = jsonify({'token' : token.decode('UTF-8')})
+        return make_response(responseObject), 200
 
     return make_response('could not verify',  401, {'WWW.Authentication': 'Basic realm: "login required"'})
 
@@ -71,8 +79,7 @@ def get_all_users():
         user_data['password'] = user.password
 
         result.append(user_data)
-
-    return jsonify({'users': result})
+    return make_response(jsonify({'users': result})), 200
 
 @app.route('/remove_user/<public_id>', methods=['DELETE'])
 @token_required

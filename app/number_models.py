@@ -1,4 +1,7 @@
 from settings import app, db
+from flask import request
+
+from paginator import paginate
 
 
 class DIDNumber(db.Model):
@@ -38,7 +41,17 @@ class DIDNumber(db.Model):
         db.session.commit()
 
     def get_all_dids():
-        return [DIDNumber.json(did) for did in DIDNumber.query.all()]
+        try:
+            page = int(request.args.get('page', 1))
+            per_page = int(request.args.get('per_page', 50))
+        except Exception as e:
+            return jsonify({'exception': e})
+
+
+        response = paginate(DIDNumber.query.order_by(DIDNumber.id), page=page, per_page=per_page)
+        items = response['items']
+
+        return items
 
     def get_did(_id):
         return [DIDNumber.json(DIDNumber.query.filter_by(id=_id).first())]

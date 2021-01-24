@@ -7,13 +7,13 @@ from auth_models import User
 from auth_api import token_required
 
 
+
 @app.route('/')
 @app.route('/dids', methods=['GET'])
 @token_required
 def get_dids():
-    return jsonify({
-        'DID Numbers': DIDNumber.get_all_dids()
-    })
+    page_items = DIDNumber.get_all_dids()
+    return jsonify(page_items)
 
 
 @app.route('/dids/<int:id>', methods=['GET'])
