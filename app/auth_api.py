@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, make_response
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 import jwt
-from datetime import datetime
+import datetime
 from functools import wraps
 
 from settings import app, db
@@ -52,7 +52,7 @@ def login_user():
     user = User.query.filter_by(name=auth.username).first()
 
     if check_password_hash(user.password, auth.password):
-        token = jwt.encode({'public_id': user.public_id, 'exp' : datetime.utcnow() + timedelta(minutes=30)}, app.config['SECRET_KEY'])
+        token = jwt.encode({'public_id': user.public_id, 'exp' : datetime.datetime.utcnow() + datetime.timedelta(minutes=30)}, app.config['SECRET_KEY'])
         return jsonify({'token' : token.decode('UTF-8')})
 
     return make_response('could not verify',  401, {'WWW.Authentication': 'Basic realm: "login required"'})
