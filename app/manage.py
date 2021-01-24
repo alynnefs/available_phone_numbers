@@ -2,8 +2,8 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 
 from settings import app, db
-from app_models import DIDNumber
-
+from number_models import DIDNumber
+from auth_models import User
 
 migrate = Migrate(app, db)
 manager = Manager(app)

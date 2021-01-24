@@ -1,12 +1,8 @@
-from flask_sqlalchemy import SQLAlchemy
-
-from settings import app
-
-db = SQLAlchemy(app)
+from settings import app, db
 
 
 class DIDNumber(db.Model):
-    __tablename__ = 'didnumber'
+    __tablename__ = 'did_number'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     value = db.Column(db.String(17))
     monthyPrice = db.Column(db.Numeric(scale=2, precision=8, decimal_return_scale=2))
