@@ -1,5 +1,5 @@
 from settings import app, db
-from flask import request
+from flask import abort, jsonify, make_response, request
 
 from paginator import paginate
 
@@ -13,10 +13,13 @@ class DIDNumber(db.Model):
     currency = db.Column(db.String(5))
 
     def __init__(self, value, monthyPrice, setupPrice, currency):
-        self.value = value
+        if monthyPrice < 0 or setupPrice < 0:
+            abort(make_response(jsonify(message="negative value"), 400))
+        
+        self.value = str(value)
         self.monthyPrice = monthyPrice
         self.setupPrice = setupPrice
-        self.currency = currency
+        self.currency = str(currency)
 
     def __repr__(self):
         return f'<id {self.id}>'
@@ -24,10 +27,10 @@ class DIDNumber(db.Model):
     def json(self):
         return {
             'id': self.id,
-            'value': self.value,
+            'value': str(self.value),
             'monthyPrice': str(self.monthyPrice),
             'setupPrice': str(self.setupPrice),
-            'currency': self.currency
+            'currency': str(self.currency)
         }
 
     def add_did(_value, _monthyPrice, _setupPrice, _currency):
