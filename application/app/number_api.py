@@ -11,6 +11,11 @@ from auth_api import token_required
 @app.route('/dids', methods=['GET'])
 @token_required
 def get_dids():
+    """
+    This method gets paged users
+    Returns:
+        page_items (json): paged users
+    """
     page_items = DIDNumber.get_all_dids()
     return jsonify(page_items)
 
@@ -18,12 +23,22 @@ def get_dids():
 @app.route('/dids/<int:id>', methods=['GET'])
 @token_required
 def get_did_by_id(id):
+    """
+    This method gets an user by id
+    Returns:
+        return_value (json): the user of the given id
+    """
     return_value = DIDNumber.get_did(id)
     return jsonify(return_value)
 
 @app.route('/dids', methods=['POST'])
 @token_required
 def add_did():
+    """
+    This method adds an user
+    Returns:
+        response (json): status 201 - if the user is correctly added
+    """
     request_data = request.get_json()
 
     DIDNumber.add_did(
@@ -44,6 +59,11 @@ def add_did():
 @app.route('/dids/<int:id>', methods=['PUT'])
 @token_required
 def update_did(id):
+    """
+    This method updates an user by id
+    Returns:
+        response (json): status 201 - if the user is correctly updated
+    """
     request_data = request.get_json()
     DIDNumber.update_did(
         id,
@@ -62,6 +82,11 @@ def update_did(id):
 @app.route('/dids/<int:id>', methods=['DELETE'])
 @token_required
 def remove_did(id):
+    """
+    This method removes an user
+    Returns:
+        response (json): status 200 - if the user is correctly removed
+    """
     DIDNumber.delete_did(id)
     response = Response(
         "DID number deleted",

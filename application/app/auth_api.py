@@ -10,8 +10,16 @@ from auth_models import User
 
 
 def token_required(f):
+    """
+    This method ensures access only if the token is valid
+
+    Returns:
+        json: {'message': '...'} if the token is invalid or missing
+        function: otherwise
+    """
     @wraps(f)
     def decorator(*args, **kwargs):
+
         token = None
 
         if 'x-access-tokens' in request.headers:
@@ -30,9 +38,13 @@ def token_required(f):
     return decorator
 
 
-
 @app.route('/register', methods=['GET', 'POST'])
 def signup_user():
+    """
+    This method signs up an user and adds in the database
+    Returns:
+        json
+    """
     data = request.get_json()
 
     hashed_password = generate_password_hash(
@@ -57,6 +69,13 @@ def signup_user():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login_user():
+    """
+    This method connects an user and adds in the database
+    Returns:
+        make_response (json):  status 401 - if ant credentials is missing
+        responseObject (json): status 200 and token - if the credentials exist
+                               and are correct
+    """
     auth = request.authorization
 
     if not auth or not auth.username or not auth.password:
@@ -87,7 +106,11 @@ def login_user():
 
 @app.route('/users', methods=['GET'])
 def get_all_users():
-
+    """
+    This method gets all users
+    Returns:
+        make_response (json): status 200 - if users are obtained
+    """
     users = User.query.all()
 
     result = []
@@ -104,6 +127,11 @@ def get_all_users():
 @app.route('/remove_user/<public_id>', methods=['DELETE'])
 @token_required
 def remove_user(public_id):
+    """
+    This method removes an user
+    Returns:
+        response (json): status 200 - if the user was deleted
+    """
     User.query.filter_by(public_id=str(public_id)).delete()
     db.session.commit()
     response = Response(

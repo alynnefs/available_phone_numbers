@@ -1,6 +1,11 @@
 from math import ceil
 
 def paginate(query, page, per_page):
+    """
+    This method paginates the response
+    Returns:
+        json: page attributes
+    """
     total = query.count()
     per_page = min(per_page, total) if total > 0 and per_page > 0 else 50
     total_pages = ceil(total / per_page)
