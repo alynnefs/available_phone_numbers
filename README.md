@@ -22,6 +22,7 @@ create a virtual enviroment
 ```
 virtualenv --python=/usr/bin/python3.6 .venv
 source .venv/bin/activate
+pip install -r application/requirements.txt
 ```
 run the API
 ```
