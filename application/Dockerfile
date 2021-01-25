@@ -36,4 +36,4 @@ ENV LC_ALL C.UTF-8
 COPY --from=build /inventory_api.tar /app
 RUN tar xf inventory_api.tar
 
-CMD ["./run_api.sh"]
+CMD ["python", "app/api.pyc"]
