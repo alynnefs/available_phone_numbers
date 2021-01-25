@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  web:
+    build: ./application
+    container_name: available_phone_numbers
+    ports:
+      - 5000:5000
+    environment:
+      FLASK_APP: application.app.routes
+      APP_SQLALCHEMY_DATABASE_URI: postgresql://alynne:123456@db/inventory
+    depends_on:
+      - db
+    links:
+      - db
+  db:
+    image: postgres:alpine
+    volumes:
+      - /var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: alynne
+      POSTGRES_PASSWORD: 123456
+      POSTGRES_DB: inventory
+    healthcheck:
+      test: "pg_isready -h localhost -p 5432 -q -U alynne -d inventory"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+volumes:
+  postgres_data:
